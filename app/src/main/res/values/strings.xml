@@ -11,4 +11,20 @@
     <string name="action_open_generate">번호 생성하기</string>
 
     <string name="placeholder_coming_soon">준비 중입니다</string>
+    <string name="action_cancel">취소</string>
+
+    <!-- 번호 공 -->
+    <string name="ball_description">번호 %1$d</string>
+    <string name="ball_bonus_description">보너스 번호 %1$d</string>
+
+    <!-- 홈 -->
+    <string name="round_title">제 %1$d회</string>
+    <string name="draw_date">%1$s 추첨</string>
+    <string name="first_prize_amount">1등 당첨금 %1$s원</string>
+    <string name="first_prize_winners">1등 당첨자 %1$d명</string>
+    <string name="first_prize_none">1등 당첨자 없음</string>
+    <string name="home_empty">당첨번호 데이터가 없습니다</string>
+    <string name="action_previous_round">이전 회차</string>
+    <string name="action_next_round">다음 회차</string>
+    <string name="action_select_round">회차 선택</string>
 </resources>

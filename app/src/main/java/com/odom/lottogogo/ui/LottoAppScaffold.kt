@@ -22,10 +22,10 @@ import com.odom.lottogogo.ui.theme.LottoGogoTheme
 
 /** Compact: 하단 내비게이션 바, Medium / Expanded: 왼쪽 내비게이션 레일 */
 fun navigationSuiteTypeFor(windowSizeClass: WindowSizeClass): NavigationSuiteType =
-    if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
-        NavigationSuiteType.NavigationRail
-    } else {
+    if (windowSizeClass.isCompactWidth) {
         NavigationSuiteType.NavigationBar
+    } else {
+        NavigationSuiteType.NavigationRail
     }
 
 @Composable
