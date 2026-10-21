@@ -27,4 +27,11 @@
     <string name="action_previous_round">이전 회차</string>
     <string name="action_next_round">다음 회차</string>
     <string name="action_select_round">회차 선택</string>
+
+    <!-- 통계 -->
+    <string name="stats_filter_all">전체</string>
+    <string name="stats_filter_recent">최근 %1$d회</string>
+    <string name="stats_include_bonus">보너스 번호 포함</string>
+    <string name="stats_cell_description">번호 %1$d, %2$d회</string>
+    <string name="stats_reference_notice">과거 데이터 기반 참고용 통계입니다.</string>
 </resources>
