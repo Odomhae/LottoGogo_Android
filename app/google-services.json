@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1075785333816",
+    "project_id": "lottogogo-89873",
+    "storage_bucket": "lottogogo-89873.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1075785333816:android:c27306ae3f0d5efaf7facd",
+        "android_client_info": {
+          "package_name": "com.odom.lottogogo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdnUZwR6pLUkYvv1b2VgXDIbFuKGdcmrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
