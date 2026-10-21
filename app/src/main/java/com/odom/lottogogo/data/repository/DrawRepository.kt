@@ -3,6 +3,7 @@ package com.odom.lottogogo.data.repository
 import com.odom.lottogogo.data.local.dao.DrawDao
 import com.odom.lottogogo.data.local.dao.NumberCount
 import com.odom.lottogogo.data.local.entity.Draw
+import com.odom.lottogogo.domain.LottoRules
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -40,11 +41,6 @@ class DrawRepository @Inject constructor(
 
     private fun fillAllNumbers(counts: List<NumberCount>): List<NumberCount> {
         val byNum = counts.associate { it.num to it.cnt }
-        return (MIN_NUMBER..MAX_NUMBER).map { NumberCount(it, byNum[it] ?: 0) }
-    }
-
-    private companion object {
-        const val MIN_NUMBER = 1
-        const val MAX_NUMBER = 45
+        return LottoRules.NUMBER_RANGE.map { NumberCount(it, byNum[it] ?: 0) }
     }
 }
