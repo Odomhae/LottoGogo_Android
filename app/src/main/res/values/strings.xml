@@ -70,4 +70,14 @@
     <string name="source_qr">QR 스캔</string>
     <string name="source_generated">자동 생성</string>
     <string name="source_manual">직접 입력</string>
+
+    <!-- QR 확인 -->
+    <string name="scan_description">로또 용지의 QR 코드를 스캔해 당첨 여부를 확인합니다</string>
+    <string name="action_scan">QR 스캔하기</string>
+    <string name="scan_prompt">용지의 QR 코드를 화면 안에 맞춰 주세요</string>
+    <string name="scan_permission_denied">QR 스캔을 위해 카메라 권한이 필요합니다. 설정에서 권한을 허용해 주세요.</string>
+    <string name="action_open_settings">설정 열기</string>
+    <string name="scan_invalid_qr">로또 용지 QR 코드가 아닙니다</string>
+    <string name="scan_not_drawn">아직 추첨 전인 회차입니다</string>
+    <string name="action_close">닫기</string>
 </resources>
