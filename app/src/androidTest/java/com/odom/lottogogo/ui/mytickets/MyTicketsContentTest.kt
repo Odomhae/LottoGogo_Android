@@ -13,7 +13,6 @@ import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
-import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.core.layout.WindowSizeClass
 import com.odom.lottogogo.ComposeTestActivity
@@ -89,7 +88,8 @@ class MyTicketsContentTest {
         composeRule.onNodeWithText("5개 일치").assertIsDisplayed()
         composeRule.onNodeWithText("자동 생성").assertDoesNotExist()   // 목록 숨김
 
-        Espresso.pressBack()
+        // 창 포커스가 없어도(잠금 화면 위) 동작하도록 디스패처로 뒤로 가기 전달
+        composeRule.runOnUiThread { composeRule.activity.onBackPressedDispatcher.onBackPressed() }
 
         composeRule.onNodeWithText("자동 생성").assertIsDisplayed()
         composeRule.onNodeWithText("5개 일치").assertDoesNotExist()
