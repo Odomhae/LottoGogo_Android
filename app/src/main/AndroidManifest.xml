@@ -27,6 +27,18 @@
             </intent-filter>
         </activity>
 
+        <!-- WorkManager는 LottoApp(Configuration.Provider, HiltWorkerFactory)에서 초기화 -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
         <!-- zxing 기본값(sensorLandscape) 대신 방향 고정 해제 -->
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"

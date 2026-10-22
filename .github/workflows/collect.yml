@@ -1,0 +1,38 @@
+name: Collect lotto draws
+
+on:
+  schedule:
+    - cron: '30 12 * * 6'   # 토 21:30 KST
+    - cron: '0 0 * * 0'     # 일 09:00 KST (재시도)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: collect-draws
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r tools/collect/requirements.txt
+
+      - name: Unit tests
+        run: |
+          python -m unittest discover -s tools
+          python -m unittest discover -s tools/collect
+
+      - name: Collect and write to Firestore
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: python tools/collect/collect.py

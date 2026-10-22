@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    // 당첨 결과: 클라이언트는 읽기만. 쓰기는 GitHub Actions(Admin SDK)만 한다
+    match /draws/{round} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

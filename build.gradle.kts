@@ -5,6 +5,5 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.room) apply false
-    // google-services.json 준비 후 Step 10에서 :app에 적용
     alias(libs.plugins.google.services) apply false
 }
