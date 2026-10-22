@@ -3,6 +3,7 @@ package com.odom.lottogogo.ui
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
@@ -103,7 +104,7 @@ class LottoAppScaffoldTest {
         composeRule.onNodeWithText("번호 생성하기").performClick()
         composeRule.runOnIdle { assertEquals(Routes.GENERATE, navController.currentDestination?.route) }
 
-        composeRule.onNodeWithText("뒤로 가기").performClick()
+        composeRule.onNodeWithContentDescription("뒤로 가기").performClick()
         composeRule.runOnIdle {
             assertEquals(TopLevelDestination.HOME.route, navController.currentDestination?.route)
         }
