@@ -16,5 +16,7 @@ abstract class LottoDatabase : RoomDatabase() {
 
     companion object {
         const val NAME = "lotto.db"
+        /** tools/build_asset_db.py가 생성하는 내장 DB (app/src/main/assets) */
+        const val ASSET = "lotto.db"
     }
 }

@@ -15,11 +15,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-    // Step 9에서 createFromAsset("lotto.db") 적용
+    // 최초 설치 시 assets/lotto.db(전 회차 내장)로 생성. 이후 신규 회차는 동기화로 추가
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): LottoDatabase =
-        Room.databaseBuilder(context, LottoDatabase::class.java, LottoDatabase.NAME).build()
+        Room.databaseBuilder(context, LottoDatabase::class.java, LottoDatabase.NAME)
+            .createFromAsset(LottoDatabase.ASSET)
+            .build()
 
     @Provides
     fun provideDrawDao(db: LottoDatabase): DrawDao = db.drawDao()
