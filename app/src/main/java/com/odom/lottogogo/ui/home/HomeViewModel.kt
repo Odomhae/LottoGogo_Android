@@ -3,6 +3,8 @@ package com.odom.lottogogo.ui.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.odom.lottogogo.data.local.SyncStatus
+import com.odom.lottogogo.data.local.SyncStatusStore
 import com.odom.lottogogo.data.local.entity.Draw
 import com.odom.lottogogo.data.repository.DrawRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +20,7 @@ data class HomeUiState(
     val isLoading: Boolean = true,
     val rounds: List<Int> = emptyList(),   // 내림차순
     val draw: Draw? = null,                // 선택한 회차 (선택 전에는 최신 회차)
+    val syncStatus: SyncStatus = SyncStatus(),
 ) {
     val isEmpty: Boolean get() = !isLoading && draw == null
     val previousRound: Int? get() = draw?.let { d -> rounds.firstOrNull { it < d.round } }
@@ -27,6 +30,7 @@ data class HomeUiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     drawRepository: DrawRepository,
+    syncStatusStore: SyncStatusStore,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -39,8 +43,8 @@ class HomeViewModel @Inject constructor(
     }
 
     val uiState: StateFlow<HomeUiState> =
-        combine(drawRepository.rounds(), selectedDraw) { rounds, draw ->
-            HomeUiState(isLoading = false, rounds = rounds, draw = draw)
+        combine(drawRepository.rounds(), selectedDraw, syncStatusStore.status) { rounds, draw, status ->
+            HomeUiState(isLoading = false, rounds = rounds, draw = draw, syncStatus = status)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeUiState())
 
     fun selectRound(round: Int) {

@@ -1,8 +1,10 @@
 package com.odom.lottogogo.ui.home
 
 import androidx.lifecycle.SavedStateHandle
+import com.odom.lottogogo.data.local.SyncStatus
 import com.odom.lottogogo.data.repository.DrawRepository
 import com.odom.lottogogo.testutil.FakeDrawDao
+import com.odom.lottogogo.testutil.FakeSyncStatusStore
 import com.odom.lottogogo.testutil.MainDispatcherRule
 import com.odom.lottogogo.testutil.testDraw
 import kotlinx.coroutines.flow.collect
@@ -22,9 +24,10 @@ class HomeViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val dao = FakeDrawDao(listOf(testDraw(1), testDraw(2), testDraw(3)))
+    private val syncStatus = FakeSyncStatusStore()
 
     private fun viewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()) =
-        HomeViewModel(DrawRepository(dao), savedStateHandle)
+        HomeViewModel(DrawRepository(dao), syncStatus, savedStateHandle)
 
     @Test
     fun initialState_showsLatestDraw() = runTest {
@@ -73,9 +76,31 @@ class HomeViewModelTest {
 
     @Test
     fun emptyDatabase_isEmptyState() = runTest {
-        val vm = HomeViewModel(DrawRepository(FakeDrawDao()), SavedStateHandle())
+        val vm = HomeViewModel(DrawRepository(FakeDrawDao()), FakeSyncStatusStore(), SavedStateHandle())
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect() }
 
         assertTrue(vm.uiState.value.isEmpty)
+    }
+
+    @Test
+    fun syncStatus_propagatesAndDetectsOffline() = runTest {
+        val vm = viewModel()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.uiState.collect() }
+
+        syncStatus.markSuccess(100L)
+        assertEquals(SyncStatus(lastSuccessAt = 100L), vm.uiState.value.syncStatus)
+        assertFalse(vm.uiState.value.syncStatus.isOffline)
+
+        syncStatus.markFailure(200L)
+        assertTrue(vm.uiState.value.syncStatus.isOffline)
+
+        syncStatus.markSuccess(300L)
+        assertFalse(vm.uiState.value.syncStatus.isOffline)
+    }
+
+    @Test
+    fun syncStatus_failureWithoutSuccess_isOffline() {
+        assertTrue(SyncStatus(lastFailureAt = 1L).isOffline)
+        assertFalse(SyncStatus().isOffline)
     }
 }

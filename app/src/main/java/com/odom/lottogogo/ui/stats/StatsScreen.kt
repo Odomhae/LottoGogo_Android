@@ -65,6 +65,12 @@ fun StatsContent(
         Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         return
     }
+    if (state.maxCount == 0) {
+        Box(modifier.fillMaxSize().padding(Dimens.ScreenPadding), contentAlignment = Alignment.Center) {
+            Text(stringResource(R.string.stats_empty), style = MaterialTheme.typography.bodyLarge)
+        }
+        return
+    }
     if (windowSizeClass.isExpandedWidth) {
         Row(
             modifier = modifier.fillMaxSize().padding(Dimens.ScreenPadding),

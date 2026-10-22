@@ -433,4 +433,4 @@ service cloud.firestore {
 - [ ] 앱 이름 / 패키지명 / 아이콘
 - [ ] 광고(AdMob) 탑재 여부
 - [ ] 생성 번호 기록을 보관함과 분리할지 여부
-- [ ] 동행복권 데이터 수집 소스 확정 (Step 10 전에 결정)
+- [x] 동행복권 데이터 수집 소스 확정 (Step 10 전에 결정) → 당첨결과 페이지 JSON `/lt645/selectPstLt645InfoNew.do` (`tools/dhlottery.py`)

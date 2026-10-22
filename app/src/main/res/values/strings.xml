@@ -27,12 +27,17 @@
     <string name="action_previous_round">이전 회차</string>
     <string name="action_next_round">다음 회차</string>
     <string name="action_select_round">회차 선택</string>
+    <string name="sync_last_updated">마지막 갱신 %1$s</string>
+    <string name="sync_offline">오프라인 상태입니다. 마지막 갱신 %1$s</string>
+    <string name="sync_offline_never">오프라인 상태입니다. 앱에 내장된 당첨번호를 표시합니다</string>
+    <string name="sync_never">앱에 내장된 당첨번호를 표시합니다</string>
 
     <!-- 통계 -->
     <string name="stats_filter_all">전체</string>
     <string name="stats_filter_recent">최근 %1$d회</string>
     <string name="stats_include_bonus">보너스 번호 포함</string>
     <string name="stats_cell_description">번호 %1$d, %2$d회</string>
+    <string name="stats_empty">통계를 표시할 당첨번호 데이터가 없습니다</string>
     <string name="stats_reference_notice">과거 데이터 기반 참고용 통계입니다.</string>
 
     <!-- 공통 동작 -->

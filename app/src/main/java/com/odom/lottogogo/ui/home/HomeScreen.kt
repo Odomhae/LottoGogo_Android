@@ -96,6 +96,7 @@ private fun HomeSinglePane(
                 .padding(Dimens.ScreenPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            SyncStatusLine(state.syncStatus)
             RoundSelector(state = state, onSelectRound = onSelectRound)
             DrawDetail(draw = requireNotNull(state.draw), onGenerateClick = onGenerateClick)
         }
@@ -139,14 +140,16 @@ private fun HomeListDetail(
         detailPane = {
             AnimatedPane {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-                    DrawDetail(
-                        draw = draw,
-                        onGenerateClick = onGenerateClick,
+                    Column(
                         modifier = Modifier
                             .widthIn(max = Dimens.SinglePaneMaxWidth)
                             .verticalScroll(rememberScrollState())
                             .padding(Dimens.ScreenPadding),
-                    )
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        SyncStatusLine(state.syncStatus)
+                        DrawDetail(draw = draw, onGenerateClick = onGenerateClick)
+                    }
                 }
             }
         },

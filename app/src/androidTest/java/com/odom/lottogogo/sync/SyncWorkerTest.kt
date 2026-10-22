@@ -10,11 +10,15 @@ import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
 import com.odom.lottogogo.data.local.LottoDatabase
+import com.odom.lottogogo.data.local.SyncStatus
+import com.odom.lottogogo.data.local.SyncStatusStore
 import com.odom.lottogogo.data.local.entity.Draw
 import com.odom.lottogogo.data.local.entity.MyTicket
 import com.odom.lottogogo.data.local.entity.Source
 import com.odom.lottogogo.data.remote.RemoteDrawDataSource
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -23,13 +27,22 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 @RunWith(AndroidJUnit4::class)
 class SyncWorkerTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private lateinit var db: LottoDatabase
+    private val syncStatus = object : SyncStatusStore {
+        override val status = MutableStateFlow(SyncStatus())
+        override suspend fun markSuccess(at: Long) = status.update { it.copy(lastSuccessAt = at) }
+        override suspend fun markFailure(at: Long) = status.update { it.copy(lastFailureAt = at) }
+    }
+    private val clock = Clock.fixed(Instant.ofEpochMilli(5_000L), ZoneOffset.UTC)
 
     @Before
     fun setUp() {
@@ -55,7 +68,7 @@ class SyncWorkerTest {
         return TestListenableWorkerBuilder<SyncWorker>(context)
             .setWorkerFactory(object : WorkerFactory() {
                 override fun createWorker(appContext: Context, workerClassName: String, params: WorkerParameters): ListenableWorker =
-                    SyncWorker(appContext, params, syncer)
+                    SyncWorker(appContext, params, syncer, syncStatus, clock)
             })
             .build()
     }
@@ -81,6 +94,7 @@ class SyncWorkerTest {
         val tickets = db.ticketDao().all().first().associateBy { it.round }
         assertEquals(4, tickets.getValue(1247).rank)
         assertNull(tickets.getValue(1248).rank)
+        assertEquals(SyncStatus(lastSuccessAt = 5_000L), syncStatus.status.value)
     }
 
     @Test
@@ -93,5 +107,6 @@ class SyncWorkerTest {
 
         assertEquals(ListenableWorker.Result.retry(), result)
         assertNull(db.drawDao().maxRound())
+        assertEquals(SyncStatus(lastFailureAt = 5_000L), syncStatus.status.value)
     }
 }
