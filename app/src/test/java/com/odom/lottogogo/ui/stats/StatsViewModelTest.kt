@@ -93,6 +93,16 @@ class StatsViewModelTest {
     }
 
     @Test
+    fun heatLevel_minToMaxRange() {
+        // 전체 회차처럼 150~190에 몰려 있어도 최소=0, 최대=1로 펼친다
+        assertEquals(0f, heatLevel(150, 150, 190))
+        assertEquals(0.5f, heatLevel(170, 150, 190))
+        assertEquals(1f, heatLevel(190, 150, 190))
+        assertEquals(1f, heatLevel(5, 5, 5))       // 모두 같으면 최대 농도
+        assertEquals(0f, heatLevel(0, 0, 0))       // 데이터 없음
+    }
+
+    @Test
     fun heatLevel_isRatioToMax() {
         assertEquals(0f, heatLevel(0, 0))
         assertEquals(0f, heatLevel(0, 10))

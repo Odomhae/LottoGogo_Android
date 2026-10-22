@@ -79,8 +79,8 @@ class StatsContentTest {
         setContent(phone)
         composeRule.onNodeWithContentDescription("번호 7, 20회").assertIsDisplayed()
 
-        composeRule.onNodeWithText("최근 10회").performClick()
-        composeRule.onNodeWithText("최근 10회").assertIsSelected()
+        composeRule.onNodeWithText("10회").performClick()
+        composeRule.onNodeWithText("10회").assertIsSelected()
         composeRule.onNodeWithContentDescription("번호 7, 1회").assertIsDisplayed()
 
         composeRule.onNodeWithText("보너스 번호 포함").performClick()

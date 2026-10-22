@@ -80,7 +80,7 @@ fun StatsContent(
                 modifier = Modifier.weight(2f).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                NumberGrid(state.counts, state.maxCount, columns = EXPANDED_COLUMNS)
+                NumberGrid(state.counts, columns = EXPANDED_COLUMNS)
                 StatsFilters(state, onFilterChange, onIncludeBonusChange)
                 ReferenceNotice()
             }
@@ -95,7 +95,7 @@ fun StatsContent(
                     .padding(Dimens.ScreenPadding),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                NumberGrid(state.counts, state.maxCount, columns = COMPACT_COLUMNS)
+                NumberGrid(state.counts, columns = COMPACT_COLUMNS)
                 StatsFilters(state, onFilterChange, onIncludeBonusChange)
                 ReferenceNotice()
             }
@@ -117,7 +117,7 @@ private fun StatsFilters(
                     onClick = { onFilterChange(filter) },
                     shape = SegmentedButtonDefaults.itemShape(index, RecentFilter.entries.size),
                 ) {
-                    Text(filterLabel(filter))
+                    Text(filterLabel(filter), maxLines = 1)
                 }
             }
         }

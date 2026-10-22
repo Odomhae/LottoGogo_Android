@@ -34,7 +34,7 @@
 
     <!-- 통계 -->
     <string name="stats_filter_all">전체</string>
-    <string name="stats_filter_recent">최근 %1$d회</string>
+    <string name="stats_filter_recent">%1$d회</string>
     <string name="stats_include_bonus">보너스 번호 포함</string>
     <string name="stats_cell_description">번호 %1$d, %2$d회</string>
     <string name="stats_empty">통계를 표시할 당첨번호 데이터가 없습니다</string>

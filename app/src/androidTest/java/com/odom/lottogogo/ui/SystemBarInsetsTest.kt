@@ -10,7 +10,11 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.Dp
@@ -53,9 +57,11 @@ class SystemBarInsetsTest {
         node.config.getOrNull(SemanticsProperties.Text).orEmpty().any { "갱신" in it.text || "내장" in it.text }
     }
 
+    /** Compose 루트를 직접 캡처 (시스템 스크린샷은 이전 프레임이 찍힐 수 있음) */
     private fun screenshot(name: String) {
+        composeRule.waitForIdle()
         val instrumentation = InstrumentationRegistry.getInstrumentation()
-        val bitmap = instrumentation.uiAutomation.takeScreenshot() ?: return
+        val bitmap = composeRule.onRoot().captureToImage().asAndroidBitmap()
         val dir = File(instrumentation.targetContext.getExternalFilesDir(null), "screenshots").apply { mkdirs() }
         File(dir, "$name.png").outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
     }
@@ -70,7 +76,9 @@ class SystemBarInsetsTest {
         screenshot("home")
 
         composeRule.onAllNodesWithText("통계").onFirst().performClick()
-        composeRule.waitForIdle()
+        composeRule.waitUntil(LOAD_TIMEOUT_MS) {
+            composeRule.onAllNodesWithTag(numberCellTag(45)).fetchSemanticsNodes().isNotEmpty()
+        }
         assertBelowStatusBar(composeRule.onNodeWithTag(numberCellTag(1)), "stats cell 1")
         screenshot("stats")
 
@@ -81,5 +89,9 @@ class SystemBarInsetsTest {
         composeRule.onAllNodesWithText("내 번호").onFirst().performClick()
         composeRule.waitForIdle()
         screenshot("my_tickets")
+    }
+
+    private companion object {
+        const val LOAD_TIMEOUT_MS = 5_000L
     }
 }

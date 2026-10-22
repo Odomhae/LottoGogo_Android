@@ -4,12 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,9 +34,19 @@ import com.odom.lottogogo.data.local.dao.NumberCount
 import com.odom.lottogogo.ui.components.LottoBall
 import com.odom.lottogogo.ui.components.ballColor
 
-/** 0.0(최소) ~ 1.0(최대) 색 농도. 최대값이 0이면 0 */
+/** 0 ~ 최대값 대비 비율 (막대 차트 길이). 최대값이 0이면 0 */
 fun heatLevel(count: Int, maxCount: Int): Float =
     if (maxCount <= 0) 0f else (count.toFloat() / maxCount).coerceIn(0f, 1f)
+
+/**
+ * 최소 ~ 최대 사이 위치 (그리드 색 농도). 전체 회차처럼 횟수가 좁은 범위에 몰려 있어도 차이가 보이도록
+ * 0이 아니라 최소 횟수를 기준으로 한다. 모든 값이 같으면 1(값이 있을 때) 또는 0.
+ */
+fun heatLevel(count: Int, minCount: Int, maxCount: Int): Float = when {
+    maxCount <= 0 -> 0f
+    maxCount == minCount -> 1f
+    else -> ((count - minCount).toFloat() / (maxCount - minCount)).coerceIn(0f, 1f)
+}
 
 fun numberCellTag(number: Int) = "number_cell_$number"
 
@@ -43,14 +54,19 @@ fun numberCellTag(number: Int) = "number_cell_$number"
 @Composable
 fun NumberGrid(
     counts: List<NumberCount>,
-    maxCount: Int,
     columns: Int,
     modifier: Modifier = Modifier,
 ) {
+    val minCount = counts.minOfOrNull { it.cnt } ?: 0
+    val maxCount = counts.maxOfOrNull { it.cnt } ?: 0
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         counts.chunked(columns).forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                row.forEach { NumberCell(it, maxCount, Modifier.weight(1f)) }
+            // 한 행의 셀 높이를 가장 큰 셀에 맞춘다 (글자 크기 확대 시에도 번호/횟수 두 줄 표시)
+            Row(
+                modifier = Modifier.height(IntrinsicSize.Min),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                row.forEach { NumberCell(it, heatLevel(it.cnt, minCount, maxCount), Modifier.weight(1f).fillMaxHeight()) }
                 // 마지막 행이 덜 찼을 때 셀 크기 유지
                 repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
             }
@@ -59,23 +75,23 @@ fun NumberGrid(
 }
 
 @Composable
-private fun NumberCell(count: NumberCount, maxCount: Int, modifier: Modifier = Modifier) {
+private fun NumberCell(count: NumberCount, heat: Float, modifier: Modifier = Modifier) {
     val colors = MaterialTheme.colorScheme
-    val background = lerp(colors.surfaceContainerHighest, colors.primary, heatLevel(count.cnt, maxCount) * 0.85f)
-    val content = lerp(colors.onSurface, colors.onPrimary, if (heatLevel(count.cnt, maxCount) > 0.5f) 1f else 0f)
+    val background = lerp(colors.surfaceContainerHighest, colors.primary, heat * 0.85f)
+    val content = if (heat > 0.5f) colors.onPrimary else colors.onSurface
     val description = stringResource(R.string.stats_cell_description, count.num, count.cnt)
 
     Column(
         modifier = modifier
-            .aspectRatio(1f)
+            .heightIn(min = 44.dp)
             .background(background, RoundedCornerShape(8.dp))
             .testTag(numberCellTag(count.num))
             .clearAndSetSemantics { contentDescription = description },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(count.num.toString(), color = content, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        Text(count.cnt.toString(), color = content, fontSize = 10.sp)
+        Text(count.num.toString(), color = content, fontWeight = FontWeight.Bold, fontSize = 14.sp, maxLines = 1)
+        Text(count.cnt.toString(), color = content, fontSize = 11.sp, maxLines = 1)
     }
 }
 
